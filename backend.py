@@ -1,6 +1,8 @@
-# if you dont use pipenv uncomment the following:
-# from dotenv import load_dotenv
-# load_dotenv()
+# Load API keys and deployment settings from .env.
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
 
 #Step1: Setup Pydantic Model (Schema Validation)
 from pydantic import BaseModel
@@ -16,10 +18,10 @@ class RequestState(BaseModel):
 
 
 #Step2: Setup AI Agent from FrontEnd Request
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from ai_agent import get_response_from_ai_agent
 
-ALLOWED_MODEL_NAMES=["llama3-70b-8192", "mixtral-8x7b-32768", "llama-3.3-70b-versatile", "gpt-4o-mini"]
+ALLOWED_MODEL_NAMES=["openai/gpt-oss-120b", "groq/compound-mini"]
 
 app=FastAPI(title="LangGraph AI Agent")
 
@@ -39,10 +41,27 @@ def chat_endpoint(request: RequestState):
     provider = request.model_provider
 
     # Create AI Agent and get response from it! 
-    response=get_response_from_ai_agent(llm_id, query, allow_search, system_prompt, provider)
-    return response
+    try:
+        response = get_response_from_ai_agent(
+            llm_id, query, allow_search, system_prompt, provider
+        )
+        return response
+    except Exception as exc:
+        # Convert provider/API failures into a useful response for the UI.
+        raise HTTPException(
+            status_code=502,
+            detail=f"{provider} request failed: {exc}",
+        ) from exc
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 #Step3: Run app & Explore Swagger UI Docs
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=9999)
+    uvicorn.run(
+        app,
+        host=os.getenv("BACKEND_HOST", "0.0.0.0"),
+        port=int(os.getenv("PORT", os.getenv("BACKEND_PORT", "9999"))),
+    )

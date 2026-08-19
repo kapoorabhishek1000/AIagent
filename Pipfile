@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 langchain-groq = "*"
-langchain-openai = "*"
 langchain-community = "*"
 langgraph = "*"
 pydantic = "*"

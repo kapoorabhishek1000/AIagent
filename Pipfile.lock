@@ -619,15 +619,6 @@
             "markers": "python_version >= '3.9' and python_version < '4.0'",
             "version": "==0.2.3"
         },
-        "langchain-openai": {
-            "hashes": [
-                "sha256:49c921a22d272b04749a61e78bffa83aecdb8840b24b69f2909e115a357a9a5b",
-                "sha256:88d623eeb2aaa1fff65c2b419a4a1cfd37d3a1d504e598b87cf0bc822a3b70d0"
-            ],
-            "index": "pypi",
-            "markers": "python_version >= '3.9' and python_version < '4.0'",
-            "version": "==0.3.0"
-        },
         "langchain-text-splitters": {
             "hashes": [
                 "sha256:11cb7ca3694e5bdd342bc16d3875b7f7381651d4a53cbb91d34f22412ae16443",

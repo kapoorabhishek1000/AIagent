@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: ai-agent-chatbot-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python backend.py
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: BACKEND_HOST
+        value: 0.0.0.0
+
+  - type: web
+    name: ai-agent-chatbot-ui
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run frontend.py --server.address 0.0.0.0 --server.port $PORT
+    envVars:
+      - key: BACKEND_URL
+        sync: false
